@@ -6,10 +6,6 @@ import { layoutDiagram, NODE } from "@/lib/diagram-layout";
 
 // Room around the graph for the focus ring and the edge labels.
 const PAD = 6;
-const ROLE_LABEL: Record<DiagramNode["role"], string> = {
-  built: "Built",
-  context: "Context",
-};
 
 /**
  * The short tech line inside a node box. Skips an item that only repeats the
@@ -35,7 +31,8 @@ function Tech({ items }: { items: string[] }) {
 }
 
 /**
- * Block diagram drawn from a typed graph of nodes and edges.
+ * Block diagram drawn from a typed graph of nodes and edges. The same
+ * component draws the platform architecture and the delivery pipeline.
  * From 1024px it is an interactive SVG: hover, focus or click a node to read
  * what it does. Below that, where the SVG text would be too small to read,
  * the same data is a plain ordered list with every detail visible.
@@ -178,7 +175,7 @@ export function ArchitectureDiagram({ diagram }: { diagram: Diagram }) {
         <div className="border-rule mt-6 hidden min-h-[5.5rem] grid-cols-12 gap-x-6 border-t pt-3 lg:grid">
           <div className="col-span-3">
             <p className="font-semibold">{active.label}</p>
-            <p className="meta text-muted">{ROLE_LABEL[active.role]}</p>
+            <p className="meta text-muted">{diagram.roleLabels[active.role]}</p>
           </div>
           <div className="col-span-9 space-y-2">
             <p className="max-w-[62ch] leading-[1.6] text-pretty">
@@ -200,7 +197,7 @@ export function ArchitectureDiagram({ diagram }: { diagram: Diagram }) {
               <p className="font-semibold">
                 {node.label}{" "}
                 <span className="meta text-muted ml-2 font-normal">
-                  {ROLE_LABEL[node.role]}
+                  {diagram.roleLabels[node.role]}
                 </span>
               </p>
               <p className="leading-[1.6] text-pretty">{node.detail}</p>
@@ -211,13 +208,8 @@ export function ArchitectureDiagram({ diagram }: { diagram: Diagram }) {
       </ol>
 
       <figcaption className="meta text-muted mt-3">
-        <span className="hidden lg:inline">
-          Data flows left to right. Dashed nodes are outside the platform.
-          Select a node for detail.
-        </span>
-        <span className="lg:hidden">
-          Data flow, in order, from source to consumer.
-        </span>
+        {diagram.caption}
+        <span className="hidden lg:inline"> Select a node for detail.</span>
       </figcaption>
     </figure>
   );

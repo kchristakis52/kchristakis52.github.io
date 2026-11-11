@@ -12,6 +12,8 @@ import type { Diagram } from "./types";
 export const architecture: Diagram = {
   title: "Time series data platform: data flow",
   initial: "api",
+  roleLabels: { built: "Built", context: "Context" },
+  caption: "Data flows left to right. Dashed nodes are outside the platform.",
   nodes: [
     {
       id: "meters",

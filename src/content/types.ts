@@ -110,6 +110,20 @@ export interface Diagram {
   title: string;
   /** Node shown in the detail panel before any interaction. */
   initial: string;
+  /** What the two node roles mean in this diagram (solid and dashed boxes). */
+  roleLabels: Record<DiagramNode["role"], string>;
+  /** One line under the diagram explaining how to read it. */
+  caption: string;
   nodes: DiagramNode[];
   edges: DiagramEdge[];
+}
+
+export interface StackEntry {
+  label: string;
+  value: string;
+}
+
+export interface Decision {
+  title: string;
+  reason: string;
 }

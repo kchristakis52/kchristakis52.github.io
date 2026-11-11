@@ -2,8 +2,8 @@
   "ci": {
     "collect": {
       "staticDistDir": "./out",
-      "url": ["http://localhost/"],
-      "numberOfRuns": 3,
+      "url": ["http://localhost/", "http://localhost/how-this-site-is-built/"],
+      "numberOfRuns": 5,
       "settings": {
         "chromeFlags": "--no-sandbox --headless=new"
       }

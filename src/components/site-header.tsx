@@ -18,6 +18,7 @@ export function SiteHeader() {
           {NAV.map((item) => (
             <li key={item.href}>
               <Link
+                prefetch={false}
                 href={item.href}
                 className="text-muted hover:text-ink transition-colors duration-100 motion-reduce:transition-none"
               >

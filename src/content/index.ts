@@ -6,3 +6,4 @@ export { projects } from "./projects";
 export { skills } from "./skills";
 export { education, spokenLanguages } from "./education";
 export { architecture } from "./architecture";
+export { pipeline, stack, decisions, colophon } from "./colophon";

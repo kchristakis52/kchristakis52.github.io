@@ -28,7 +28,7 @@ export function TextLink({
 }) {
   if (href.startsWith("/") || href.startsWith("#")) {
     return (
-      <Link href={href} className={`link ${className}`}>
+      <Link href={href} prefetch={false} className={`link ${className}`}>
         {children}
       </Link>
     );
