@@ -1,0 +1,80 @@
+name: Gates and deploy
+
+# Every push and pull request runs the quality gates against a real build.
+# Only a push to main that passes all of them is deployed, and what is
+# deployed is the exact build the gates tested, not a second build.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  # A newer PR run replaces an older one; a production deploy is never cut off midway.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  gates:
+    name: Quality gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # GITHUB_SHA and GITHUB_RUN_ID are set by the runner; the build reads
+      # them for the provenance footer (src/lib/build-info.ts).
+      - name: Build
+        run: npm run build
+
+      - name: Link check
+        run: npm run check:links
+
+      - name: Lighthouse budget
+        run: npm run lighthouse
+
+      - name: Keep Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/reports
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload site for Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: out
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: gates
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,290 @@
+@import "tailwindcss";
+
+/*
+ * Tokens. Dark is the default sheet; light is the same sheet on paper.
+ * The theme is a `data-theme` attribute on <html>, set before first paint by
+ * the inline script in layout.tsx, so there is no flash and no hydration cost.
+ */
+:root {
+  color-scheme: dark;
+  --ground: #0e1113;
+  --ink: #e9ecea;
+  --muted: #9aa39f;
+  --rule: #2b3134;
+  --accent: #ff6a1f;
+  --on-accent: #0e1113;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground: #f3f4f1;
+  --ink: #111416;
+  --muted: #565e5b;
+  --rule: #cdd2ce;
+  /* Darkened so orange text keeps 4.5:1 on paper. */
+  --accent: #b23a05;
+  --on-accent: #ffffff;
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-martian), ui-monospace, "SFMono-Regular", monospace;
+}
+
+@layer base {
+  html {
+    background: var(--ground);
+    color: var(--ink);
+    scroll-padding-top: 2rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "kern";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+@layer components {
+  /* Metadata voice: dates, stack lists, counts, footer. Nothing else is mono. */
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1.6;
+    font-stretch: 87.5%;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+
+  /* Row and table labels: the same face, condensed, so labels read as labels by width alone. */
+  .label {
+    font-stretch: 86%;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    line-height: 1.5rem;
+    color: var(--muted);
+  }
+
+  .link {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: var(--muted);
+    transition:
+      color 120ms ease-out,
+      text-decoration-color 120ms ease-out;
+  }
+
+  .link:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  /* Controls answer by inversion: ground and ink swap, nothing moves. */
+  .control {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0 0.875rem;
+    border: 1px solid var(--ink);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease-out,
+      color 120ms ease-out;
+  }
+
+  .control:hover {
+    background: var(--ink);
+    color: var(--ground);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link,
+    .control {
+      transition: none;
+    }
+  }
+}
+
+/*
+ * Print: the same page as a one-page A4 CV.
+ * Always the paper palette, whatever theme is active. Every size on the page
+ * is in rem, so lowering the root size scales the whole sheet at once; the
+ * rules below only tighten vertical rhythm. They sit outside any layer so
+ * they win over utilities without !important.
+ */
+@page {
+  size: A4;
+  margin: 9mm 13mm 8mm;
+}
+
+@media print {
+  :root,
+  :root[data-theme] {
+    color-scheme: light;
+    --ground: #ffffff;
+    --ink: #000000;
+    --muted: #444444;
+    --rule: #b5b5b5;
+    --accent: #000000;
+    --on-accent: #ffffff;
+  }
+
+  html {
+    font-size: 10.5px;
+    background: #ffffff;
+  }
+
+  body > div {
+    max-width: none;
+    padding: 0;
+  }
+
+  main section {
+    margin-top: 0.7rem;
+  }
+
+  main section > header {
+    padding-top: 0.25rem;
+    border-top-width: 1.5px;
+  }
+
+  main section > header + div {
+    margin-top: 0.4rem;
+  }
+
+  main article {
+    padding-block: 0.4rem;
+    row-gap: 0.15rem;
+  }
+
+  main article ul {
+    margin-top: 0.3rem;
+  }
+
+  /* space-y sets both block margins; reset both. */
+  main article li {
+    margin-block: 0.05rem 0;
+  }
+
+  main h3 {
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  main h3 + p {
+    margin-top: 0;
+  }
+
+  main li,
+  main dd,
+  main td,
+  main p {
+    line-height: 1.3;
+  }
+
+  main dl > div,
+  main tr {
+    padding-block: 0.12rem;
+  }
+
+  main dd > div {
+    padding-top: 0;
+  }
+
+  main dl {
+    margin-top: 0.3rem;
+  }
+
+  main p,
+  main ul {
+    max-width: none;
+  }
+
+  /* Compact projects sit in a wrapper with its own top margin. */
+  main article + div,
+  main section > div > div {
+    margin-top: 0;
+  }
+
+  /* Six skill rows become three rows of two; education details share one row. */
+  #skills tbody {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.5rem;
+  }
+
+  #skills tr:nth-child(2) {
+    border-top-width: 0;
+    padding-top: 0;
+  }
+
+  #education dl {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    column-gap: 2rem;
+  }
+
+  #education dl > div {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  footer {
+    margin-top: 0.7rem;
+    padding-block: 0.4rem 0;
+  }
+
+  main article,
+  main tr,
+  main dl > div {
+    break-inside: avoid;
+  }
+
+  main h2,
+  main h3 {
+    break-after: avoid;
+  }
+
+  /* Paper has no hover: a link is only useful if its address is printed. */
+  .link {
+    text-decoration: none;
+  }
+
+  .link[href^="http"]:not(.no-print-url)::after {
+    content: " " attr(href);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-stretch: 87.5%;
+  }
+
+  .link svg {
+    display: none;
+  }
+}
