@@ -11,7 +11,7 @@ export const projects: Project[] = [
       "Research partners needed reliable, access-controlled smart meter data from 100+ households",
     built:
       "MQTT ingestion, TimescaleDB storage, Go REST API with authentication, role based access and an OpenAPI 3.1 spec",
-    stack: ["Go", "Gin", "pgx", "TimescaleDB", "MQTT", "OpenAPI 3.1"],
+    stack: ["Go", "Gin", "pgx", "TimescaleDB", "MQTT", "Kafka", "OpenAPI 3.1"],
     result: "Used by research partners and reused at a second replication site",
     // TODO: metric (e.g. rows or readings stored, ingest rate, API consumers, uptime).
   },

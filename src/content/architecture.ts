@@ -4,10 +4,6 @@ import type { Diagram } from "./types";
  * Architecture of the time series data platform (featured project).
  * The diagram is laid out from this graph: add a node and its edges here and
  * it appears, no drawing code to touch.
- *
- * TODO: confirm whether a Kafka broker sits between ingestion and storage.
- * It is left out until confirmed; if it exists, add a node and re-point the
- * `ingestion -> timescaledb` edge through it.
  */
 export const architecture: Diagram = {
   title: "Time series data platform: data flow",
@@ -28,18 +24,16 @@ export const architecture: Diagram = {
       label: "MQTT broker",
       role: "built",
       detail:
-        "Entry point of the platform. Receives the readings published by the meters.",
-      // TODO: broker product (e.g. Mosquitto, EMQX).
-      tech: ["MQTT"],
+        "Entry point of the platform. EMQX receives the readings published by the meters and forwards them to Kafka.",
+      tech: ["EMQX", "MQTT"],
     },
     {
-      id: "ingestion",
-      label: "Ingestion",
+      id: "kafka",
+      label: "Kafka",
       role: "built",
       detail:
-        "Subscribes to the broker and writes the readings to the database.",
-      // TODO: language and libraries of the ingestion service.
-      tech: [],
+        "Ingestion layer. Readings are streamed through Kafka, and a Kafka Connect JDBC sink writes them to the database.",
+      tech: ["Kafka", "Kafka Connect"],
     },
     {
       id: "timescaledb",
@@ -67,8 +61,8 @@ export const architecture: Diagram = {
   ],
   edges: [
     { from: "meters", to: "broker", label: "MQTT" },
-    { from: "broker", to: "ingestion", label: "MQTT" },
-    { from: "ingestion", to: "timescaledb", label: "SQL" },
+    { from: "broker", to: "kafka", label: "bridge" },
+    { from: "kafka", to: "timescaledb", label: "JDBC" },
     { from: "timescaledb", to: "api", label: "pgx" },
     { from: "api", to: "consumers", label: "REST" },
   ],
