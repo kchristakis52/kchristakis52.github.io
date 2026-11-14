@@ -2,7 +2,7 @@
   "ci": {
     "collect": {
       "staticDistDir": "./out",
-      "url": ["http://localhost/", "http://localhost/how-this-site-is-built/"],
+      "url": ["http://localhost/"],
       "numberOfRuns": 5,
       "settings": {
         "chromeFlags": "--no-sandbox --headless=new"

@@ -80,23 +80,31 @@ function ProjectBody({ project }: { project: Project }) {
 
 export function Projects() {
   const total = projects.length;
+  const tiled = projects.filter((project) => !project.featured);
+
   return (
     <>
-      {projects.map((project, index) => (
-        <Window
-          key={project.id}
-          id={index === 0 ? "projects" : `project-${project.id}`}
-          title="project"
-          meta={`${index + 1}/${total}`}
-          className={
-            project.featured
-              ? "md:col-span-12 print:col-span-12"
-              : "md:col-span-6 print:col-span-6"
-          }
-        >
-          <ProjectBody project={project} />
-        </Window>
-      ))}
+      {projects.map((project, index) => {
+        // Smaller projects tile two to a row; a last one left on its own takes the full row.
+        const alone =
+          tiled.length % 2 === 1 && project === tiled[tiled.length - 1];
+        const wide = project.featured || alone;
+        return (
+          <Window
+            key={project.id}
+            id={index === 0 ? "projects" : `project-${project.id}`}
+            title="project"
+            meta={`${index + 1}/${total}`}
+            className={
+              wide
+                ? "md:col-span-12 print:col-span-12"
+                : "md:col-span-6 print:col-span-6"
+            }
+          >
+            <ProjectBody project={project} />
+          </Window>
+        );
+      })}
     </>
   );
 }

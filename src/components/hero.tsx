@@ -24,9 +24,6 @@ function Fact({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-// The palette, as a row of swatches under the facts.
-const SWATCHES = ["bg-edge", "bg-muted", "bg-ink-2", "bg-ink", "bg-accent"];
-
 export function Hero() {
   const current = experience.find((role) => role.end === null);
   const degree = education[0];
@@ -88,39 +85,32 @@ export function Hero() {
         title="summary"
         className="md:col-span-12 lg:col-span-5 print:hidden"
       >
-        <div>
-          <dl>
-            {current ? (
-              <>
-                <Fact label="role">{current.title}</Fact>
-                <Fact label="at">{current.organisation}</Fact>
-                <Fact label="since">
-                  <time dateTime={current.start}>
-                    {formatMonth(current.start)}
-                  </time>
-                </Fact>
-              </>
-            ) : null}
-            {degree ? (
-              <Fact label="education">
-                {degree.field}, {degree.endYear}
+        <dl>
+          {current ? (
+            <>
+              <Fact label="role">{current.title}</Fact>
+              <Fact label="at">{current.organisation}</Fact>
+              <Fact label="since">
+                <time dateTime={current.start}>
+                  {formatMonth(current.start)}
+                </time>
               </Fact>
-            ) : null}
-            {programming ? (
-              <Fact label="writes">{programming.items.join(", ")}</Fact>
-            ) : null}
-            <Fact label="speaks">
-              {spokenLanguages
-                .map((l) => `${l.language} (${l.level})`)
-                .join(", ")}
+            </>
+          ) : null}
+          {degree ? (
+            <Fact label="education">
+              {degree.field}, {degree.endYear}
             </Fact>
-          </dl>
-          <div aria-hidden="true" className="mt-5 flex gap-1">
-            {SWATCHES.map((swatch) => (
-              <span key={swatch} className={`size-4 ${swatch}`} />
-            ))}
-          </div>
-        </div>
+          ) : null}
+          {programming ? (
+            <Fact label="writes">{programming.items.join(", ")}</Fact>
+          ) : null}
+          <Fact label="speaks">
+            {spokenLanguages
+              .map((l) => `${l.language} (${l.level})`)
+              .join(", ")}
+          </Fact>
+        </dl>
       </Window>
     </>
   );

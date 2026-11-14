@@ -4,6 +4,4 @@ export const site = {
   url: "https://kchristakis52.github.io",
   /** Taken from this repo's `origin` remote. */
   repo: "https://github.com/kchristakis52/kchristakis52.github.io",
-  /** Route of the "How this site is built" page. */
-  colophonPath: "/how-this-site-is-built/",
 } as const;

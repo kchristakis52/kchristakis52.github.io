@@ -21,8 +21,7 @@ function inNodeTech(node: DiagramNode): string {
 }
 
 /**
- * Block diagram drawn from a typed graph of nodes and edges. The same
- * component draws the platform architecture and the delivery pipeline.
+ * Block diagram drawn from a typed graph of nodes and edges.
  * From 1024px it is an interactive SVG: hover, focus or click a node to read
  * what it does. Below that, where the SVG text would be too small to read,
  * the same data is a plain ordered list with every detail visible.

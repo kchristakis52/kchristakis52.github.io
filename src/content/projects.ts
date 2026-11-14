@@ -1,4 +1,3 @@
-import { site } from "./site";
 import type { Project } from "./types";
 
 /** In display order. Each full project reads: problem, what I built, stack, result. */
@@ -49,16 +48,5 @@ export const projects: Project[] = [
     compact: true,
     summary: "Production Next.js + Sanity CMS website for a law firm in Athens",
     stack: ["Next.js", "Sanity CMS"],
-  },
-  {
-    id: "this-site",
-    title: "This site",
-    compact: true,
-    // TODO: one-line summary.
-    stack: ["Next.js", "TypeScript", "Tailwind"],
-    links: [
-      { label: "Source", href: site.repo },
-      { label: "How this site is built", href: site.colophonPath },
-    ],
   },
 ];

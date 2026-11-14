@@ -43,7 +43,7 @@ first. Lighthouse needs a local Chrome.
 ```
 src/
   content/      All copy and data, as typed objects. Edit the site here.
-  app/          Routes: the CV, "How this site is built", resume.json
+  app/          Routes: the CV and resume.json
   components/   Sections, the diagram, small client components
   lib/          Build info, resume.json builder, diagram layout, formatting
 scripts/
@@ -83,6 +83,3 @@ Every push and pull request runs the same job, in this order:
 
 Pull requests run steps 1 to 4 and never deploy. Lighthouse reports are kept
 as a workflow artifact for 14 days.
-
-The reasoning behind these choices is on the site:
-[How this site is built](https://kchristakis52.github.io/how-this-site-is-built/).

@@ -117,13 +117,3 @@ export interface Diagram {
   nodes: DiagramNode[];
   edges: DiagramEdge[];
 }
-
-export interface StackEntry {
-  label: string;
-  value: string;
-}
-
-export interface Decision {
-  title: string;
-  reason: string;
-}
