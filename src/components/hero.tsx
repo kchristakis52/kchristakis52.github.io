@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   education,
   emailAddress,
@@ -12,21 +13,19 @@ import { formatMonth } from "@/lib/format";
 import { EmailLink } from "./email-link";
 import { PrintButton } from "./print-button";
 import { TextLink } from "./text-link";
+import { Window } from "./window";
 
-function Fact({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="border-rule grid grid-cols-[6.5rem_1fr] gap-x-4 border-t py-2.5 text-sm leading-6">
-      <dt className="label">{label}</dt>
-      <dd className="min-w-0">{children}</dd>
+    <div className="grid grid-cols-[6.5rem_1fr] gap-x-3 py-1 font-mono text-[0.8125rem] leading-6">
+      <dt className="text-accent">{label}</dt>
+      <dd className="text-ink-2 min-w-0">{children}</dd>
     </div>
   );
 }
+
+// The palette, as a row of swatches under the facts.
+const SWATCHES = ["bg-edge", "bg-muted", "bg-ink-2", "bg-ink", "bg-accent"];
 
 export function Hero() {
   const current = experience.find((role) => role.end === null);
@@ -36,90 +35,93 @@ export function Hero() {
   const hasEmail = emailAddress().length > 1;
 
   return (
-    <section aria-labelledby="name" className="pt-12 md:pt-20 print:pt-0">
-      <h1
-        id="name"
-        className="text-[clamp(2.75rem,10.5vw,6rem)] leading-[0.92] font-semibold tracking-[-0.035em] text-balance [font-stretch:112%] print:text-[2.6rem]"
+    <>
+      <Window
+        id="about"
+        title="about"
+        meta={`${profile.location.city}, ${profile.location.country}`}
+        className="md:col-span-12 lg:col-span-7 print:col-span-12"
       >
-        {profile.name}
-      </h1>
-
-      <div className="border-rule mt-10 grid grid-cols-1 gap-x-6 gap-y-12 border-t pt-8 md:mt-14 lg:grid-cols-12 print:mt-3 print:block print:pt-3">
-        <div className="lg:col-span-7 print:col-span-7">
-          <p className="max-w-[30ch] text-[clamp(1.375rem,2.6vw,1.875rem)] leading-[1.25] font-medium tracking-[-0.015em] text-pretty print:max-w-none print:text-[1.2rem]">
-            {headline}
-          </p>
-
-          <ul className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm print:mt-2">
-            <li className="hidden print:block">
-              {profile.location.city}, {profile.location.country}
-            </li>
-            <li className="hidden print:block">
-              {site.url.replace("https://", "")}
-            </li>
-            {profile.links.github ? (
-              <li>
-                <TextLink href={profile.links.github}>GitHub</TextLink>
+        <div className="flex h-full flex-col justify-between gap-10">
+          <h1 className="font-mono text-[clamp(2.25rem,9vw,4rem)] leading-[1.02] font-bold tracking-[-0.04em] text-balance print:text-[2.4rem]">
+            {profile.name}
+          </h1>
+          <div>
+            <p className="text-ink-2 max-w-[34ch] text-[clamp(1.25rem,2.2vw,1.625rem)] leading-[1.3] font-medium tracking-[-0.01em] text-pretty print:max-w-none print:text-[1.15rem]">
+              {headline}
+            </p>
+            <ul className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 font-mono text-[0.8125rem] print:mt-2">
+              <li className="hidden print:block">
+                {profile.location.city}, {profile.location.country}
               </li>
-            ) : null}
-            {profile.links.linkedin ? (
-              <li>
-                <TextLink href={profile.links.linkedin}>LinkedIn</TextLink>
+              <li className="hidden print:block">
+                {site.url.replace("https://", "")}
               </li>
-            ) : null}
-            {hasEmail ? (
-              <li>
-                <EmailLink
-                  user={profile.email.user}
-                  domain={profile.email.domain}
-                />
+              <li className="print:hidden">
+                <PrintButton />
               </li>
-            ) : null}
-            <li className="print:hidden">
-              <PrintButton />
-            </li>
-          </ul>
-        </div>
-
-        <dl className="border-rule border-b lg:col-span-5 print:hidden">
-          <Fact label="Location">
-            {profile.location.city}, {profile.location.country}
-          </Fact>
-          {current ? (
-            <>
-              <Fact label="Current role">
-                <span className="flex gap-2.5">
-                  <span
-                    aria-hidden="true"
-                    className="bg-accent mt-[0.55rem] size-1.5 shrink-0"
+              {profile.links.github ? (
+                <li>
+                  <TextLink href={profile.links.github}>GitHub</TextLink>
+                </li>
+              ) : null}
+              {profile.links.linkedin ? (
+                <li>
+                  <TextLink href={profile.links.linkedin}>LinkedIn</TextLink>
+                </li>
+              ) : null}
+              {hasEmail ? (
+                <li>
+                  <EmailLink
+                    user={profile.email.user}
+                    domain={profile.email.domain}
                   />
-                  <span>
-                    {current.title}, {current.organisation}
-                  </span>
-                </span>
+                </li>
+              ) : null}
+            </ul>
+          </div>
+        </div>
+      </Window>
+
+      <Window
+        id="summary"
+        title="summary"
+        className="md:col-span-12 lg:col-span-5 print:hidden"
+      >
+        <div>
+          <dl>
+            {current ? (
+              <>
+                <Fact label="role">{current.title}</Fact>
+                <Fact label="at">{current.organisation}</Fact>
+                <Fact label="since">
+                  <time dateTime={current.start}>
+                    {formatMonth(current.start)}
+                  </time>
+                </Fact>
+              </>
+            ) : null}
+            {degree ? (
+              <Fact label="education">
+                {degree.field}, {degree.endYear}
               </Fact>
-              <Fact label="Since">
-                <time dateTime={current.start}>
-                  {formatMonth(current.start)}
-                </time>
-              </Fact>
-            </>
-          ) : null}
-          {degree ? (
-            <Fact label="Education">
-              {degree.field}, {degree.institution}, {degree.endYear}
+            ) : null}
+            {programming ? (
+              <Fact label="writes">{programming.items.join(", ")}</Fact>
+            ) : null}
+            <Fact label="speaks">
+              {spokenLanguages
+                .map((l) => `${l.language} (${l.level})`)
+                .join(", ")}
             </Fact>
-          ) : null}
-          {programming ? (
-            <Fact label="Programming">{programming.items.join(", ")}</Fact>
-          ) : null}
-          <Fact label="Languages">
-            {spokenLanguages
-              .map((l) => `${l.language} (${l.level})`)
-              .join(", ")}
-          </Fact>
-        </dl>
-      </div>
-    </section>
+          </dl>
+          <div aria-hidden="true" className="mt-5 flex gap-1">
+            {SWATCHES.map((swatch) => (
+              <span key={swatch} className={`size-4 ${swatch}`} />
+            ))}
+          </div>
+        </div>
+      </Window>
+    </>
   );
 }

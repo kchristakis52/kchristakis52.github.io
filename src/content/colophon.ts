@@ -18,7 +18,7 @@ export const stack: StackEntry[] = [
   },
   {
     label: "Type",
-    value: "Archivo and Martian Mono, self-hosted at build time",
+    value: "JetBrains Mono and Geist, self-hosted at build time",
   },
   {
     label: "Diagrams",

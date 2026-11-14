@@ -1,23 +1,13 @@
+import type { ReactNode } from "react";
 import { architecture, projects, type Project } from "@/content";
 import { ArchitectureDiagram } from "./architecture-diagram";
-import { plural } from "@/lib/format";
-import { Row, Section } from "./section";
 import { TextLink } from "./text-link";
-
-function Stack({ items }: { items: string[] }) {
-  return (
-    <ul className="meta text-muted flex flex-wrap gap-x-4 gap-y-0.5">
-      {items.map((item) => (
-        <li key={item}>{item}</li>
-      ))}
-    </ul>
-  );
-}
+import { Chips, Window } from "./window";
 
 function Links({ project }: { project: Project }) {
   if (!project.links?.length) return null;
   return (
-    <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+    <ul className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[0.8125rem]">
       {project.links.map((link) => (
         <li key={link.href}>
           <TextLink href={link.href}>{link.label}</TextLink>
@@ -27,103 +17,86 @@ function Links({ project }: { project: Project }) {
   );
 }
 
-/** Written as problem, built, result, stack. Any part missing from the content is simply not rendered. */
-function FullProject({ project }: { project: Project }) {
-  const { publication } = project;
+/** One labelled part of a project write-up. Renders nothing when the content has no such part. */
+function Part({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <article className="border-rule grid grid-cols-1 gap-x-6 gap-y-5 border-t py-10 first:border-t-0 first:pt-0 md:grid-cols-12 print:grid-cols-12">
-      <h3 className="text-2xl leading-[1.15] font-semibold tracking-[-0.02em] text-balance md:col-span-3 print:col-span-3">
-        {project.title}
-      </h3>
-      <dl className="border-rule border-b leading-[1.6] md:col-span-9 print:col-span-9 [&>div:first-child]:border-t-0 [&>div:first-child]:pt-0 md:[&>div:first-child]:pt-1">
-        {project.problem ? (
-          <Row label="Problem">
-            <p className="max-w-[62ch] text-pretty">{project.problem}</p>
-          </Row>
-        ) : null}
-        {project.built ? (
-          <Row label="Built">
-            <p className="max-w-[62ch] text-pretty">{project.built}</p>
-          </Row>
-        ) : null}
-        {project.result ? (
-          <Row label="Result">
-            <p className="max-w-[62ch] text-pretty">{project.result}</p>
-          </Row>
-        ) : null}
-        {publication ? (
-          <Row label="Published">
-            <p className="max-w-[62ch] text-pretty">
-              <TextLink href={publication.url} className="no-print-url">
-                {publication.title}
-              </TextLink>
-            </p>
-            <p className="meta text-muted mt-1.5">
-              {publication.venue}, {publication.authorship}, doi:
-              {publication.doi}
-            </p>
-          </Row>
-        ) : null}
-        {project.stack.length ? (
-          <Row label="Stack">
-            <div className="pt-1">
-              <Stack items={project.stack} />
-            </div>
-          </Row>
-        ) : null}
-        {project.links?.length ? (
-          <Row label="Links">
-            <Links project={project} />
-          </Row>
-        ) : null}
-      </dl>
-      {project.featured ? (
-        <div className="mt-6 md:col-span-12 print:hidden">
-          <ArchitectureDiagram diagram={architecture} />
-        </div>
-      ) : null}
-    </article>
+    <div>
+      <dt className="label">{label}</dt>
+      <dd className="mt-0.5 max-w-[60ch] text-[0.9375rem] leading-[1.6] text-pretty">
+        {children}
+      </dd>
+    </div>
   );
 }
 
-/** One ruled line: title, summary, stack, links. */
-function CompactProject({ project }: { project: Project }) {
+function Title({ children }: { children: ReactNode }) {
   return (
-    <article className="border-rule grid grid-cols-1 gap-x-6 gap-y-2 border-t py-5 md:grid-cols-12 print:grid-cols-12">
-      <h3 className="font-semibold md:col-span-3 print:col-span-3">
-        {project.title}
-      </h3>
-      <div className="space-y-2 md:col-span-9 print:col-span-9">
+    <h3 className="font-mono text-2xl leading-tight font-bold tracking-[-0.03em] text-balance">
+      {children}
+    </h3>
+  );
+}
+
+function ProjectBody({ project }: { project: Project }) {
+  const { publication } = project;
+  return (
+    <article className="flex h-full flex-col gap-5">
+      <Title>{project.title}</Title>
+      <dl
+        className={`grid gap-x-8 gap-y-4 ${project.featured ? "md:grid-cols-3 print:grid-cols-3" : ""}`}
+      >
         {project.summary ? (
-          <p className="max-w-[68ch]">{project.summary}</p>
+          <Part label="summary">{project.summary}</Part>
         ) : null}
+        {project.problem ? (
+          <Part label="problem">{project.problem}</Part>
+        ) : null}
+        {project.built ? <Part label="built">{project.built}</Part> : null}
+        {project.result ? <Part label="result">{project.result}</Part> : null}
+        {publication ? (
+          <Part label="published">
+            <TextLink href={publication.url} className="no-print-url">
+              {publication.title}
+            </TextLink>
+            <span className="meta text-muted mt-1.5 block">
+              {publication.venue}, {publication.authorship}, doi:
+              {publication.doi}
+            </span>
+          </Part>
+        ) : null}
+      </dl>
+      {project.featured ? (
+        <div className="border-rule border-t pt-5 print:hidden">
+          <ArchitectureDiagram diagram={architecture} />
+        </div>
+      ) : null}
+      <div className="mt-auto space-y-3">
         <Links project={project} />
-        {project.stack.length ? <Stack items={project.stack} /> : null}
+        <Chips items={project.stack} />
       </div>
     </article>
   );
 }
 
 export function Projects() {
-  const full = projects.filter((p) => !p.compact);
-  const compact = projects.filter((p) => p.compact);
-
+  const total = projects.length;
   return (
-    <Section
-      id="projects"
-      title="Projects"
-      meta={plural(projects.length, "project")}
-    >
-      {full.map((project) => (
-        <FullProject key={project.id} project={project} />
+    <>
+      {projects.map((project, index) => (
+        <Window
+          key={project.id}
+          id={index === 0 ? "projects" : `project-${project.id}`}
+          title="project"
+          meta={`${index + 1}/${total}`}
+          className={
+            project.featured
+              ? "md:col-span-12 print:col-span-12"
+              : "md:col-span-6 print:col-span-6"
+          }
+        >
+          <ProjectBody project={project} />
+        </Window>
       ))}
-      {compact.length ? (
-        <div className="border-rule mt-6 border-b">
-          {compact.map((project) => (
-            <CompactProject key={project.id} project={project} />
-          ))}
-        </div>
-      ) : null}
-    </Section>
+    </>
   );
 }

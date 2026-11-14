@@ -1,25 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Martian_Mono } from "next/font/google";
+import { Geist, JetBrains_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import { headline, profile, site } from "@/content";
+import { PixelField } from "@/components/pixel-field";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
 // Both faces are self-hosted at build time by next/font: no request to Google
 // at runtime, and size-adjusted fallbacks so the swap does not shift layout.
-// The width axis is what lets one family carry display, text and labels.
-const archivo = Archivo({
+// Mono is the voice of the interface; the sans is kept for running prose.
+const geist = Geist({
   subsets: ["latin"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  variable: "--font-geist",
   display: "swap",
 });
 
-const martian = Martian_Mono({
+const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
-  axes: ["wdth"],
-  variable: "--font-martian",
+  variable: "--font-jetbrains",
   display: "swap",
 });
 
@@ -40,35 +39,28 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ color: "#0e1113" }],
+  themeColor: [{ color: "#fafafa" }],
 };
-
-// Runs before first paint. Dark is the default; a stored choice overrides it.
-// Key must match STORAGE_KEY in theme-toggle.tsx.
-const themeScript = `try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html
-      lang="en"
-      data-theme="dark"
-      className={`${archivo.variable} ${martian.variable}`}
-      // The inline script may change data-theme before React hydrates.
-      suppressHydrationWarning
-    >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
-      <body className="bg-ground text-ink">
+    <html lang="en" className={`${geist.variable} ${jetbrains.variable}`}>
+      <body className="text-ink">
         <a
           href="#main"
-          className="control bg-ground sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-3 focus-visible:left-3 focus-visible:z-10 print:hidden"
+          className="control bg-ground sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-14 focus-visible:left-3 focus-visible:z-30 print:hidden"
         >
           Skip to content
         </a>
-        <div className="mx-auto max-w-[72rem] px-5 sm:px-8">
-          <SiteHeader />
-          <main id="main">{children}</main>
+        <PixelField />
+        <SiteHeader />
+        <div className="mx-auto max-w-[78rem] p-2.5">
+          <main
+            id="main"
+            className="grid grid-cols-1 gap-2.5 md:grid-cols-12 print:grid-cols-12"
+          >
+            {children}
+          </main>
           <SiteFooter />
         </div>
       </body>

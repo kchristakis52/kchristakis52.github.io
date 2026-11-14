@@ -1,45 +1,50 @@
 import { profile, site } from "@/content";
 import { EmailLink } from "./email-link";
-import { Section } from "./section";
 import { TextLink } from "./text-link";
+import { Window } from "./window";
 
 export function Contact() {
   return (
-    <Section
+    <Window
       id="contact"
-      title="Contact"
+      title="contact"
       meta={`${profile.location.city}, ${profile.location.country}`}
-      className="print:hidden"
+      className="md:col-span-12 print:hidden"
     >
-      <p className="text-[clamp(1.5rem,5.2vw,2.75rem)] leading-tight font-semibold tracking-[-0.025em] [font-stretch:108%]">
-        <EmailLink
-          user={profile.email.user}
-          domain={profile.email.domain}
-          className="decoration-rule underline-offset-[0.18em]"
-        />
-      </p>
-      <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-        {profile.links.github ? (
-          <li>
-            <TextLink href={profile.links.github}>GitHub</TextLink>
-          </li>
-        ) : null}
-        {profile.links.linkedin ? (
-          <li>
-            <TextLink href={profile.links.linkedin}>LinkedIn</TextLink>
-          </li>
-        ) : null}
-      </ul>
-      <p className="border-rule text-muted mt-10 max-w-[68ch] border-t pt-3 text-sm">
-        This CV is also available as{" "}
-        <a href="/resume.json" className="link">
-          JSON Resume
-        </a>
-        , generated from the same content:
-      </p>
-      <pre className="meta mt-2 overflow-x-auto">
-        <code>curl {site.url}/resume.json</code>
-      </pre>
-    </Section>
+      <div className="grid gap-x-10 gap-y-8 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <p className="font-mono text-[clamp(1.25rem,5.4vw,2.75rem)] leading-tight font-bold tracking-[-0.04em]">
+            <EmailLink
+              user={profile.email.user}
+              domain={profile.email.domain}
+            />
+          </p>
+          <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[0.8125rem]">
+            {profile.links.github ? (
+              <li>
+                <TextLink href={profile.links.github}>GitHub</TextLink>
+              </li>
+            ) : null}
+            {profile.links.linkedin ? (
+              <li>
+                <TextLink href={profile.links.linkedin}>LinkedIn</TextLink>
+              </li>
+            ) : null}
+          </ul>
+        </div>
+        <div className="min-w-0">
+          <p className="text-muted text-sm">
+            Also available as{" "}
+            <a href="/resume.json" className="link">
+              JSON Resume
+            </a>
+            , generated from the same content:
+          </p>
+          <pre className="meta border-rule bg-deep text-ink-2 mt-2 overflow-x-auto border px-3 py-2">
+            <code>curl {site.url}/resume.json</code>
+          </pre>
+        </div>
+      </div>
+    </Window>
   );
 }

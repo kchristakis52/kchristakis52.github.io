@@ -1,65 +1,61 @@
 @import "tailwindcss";
 
 /*
- * Tokens. Dark is the default sheet; light is the same sheet on paper.
- * The theme is a `data-theme` attribute on <html>, set before first paint by
- * the inline script in layout.tsx, so there is no flash and no hydration cost.
+ * Design tokens. One light palette; every component reads these, so the
+ * whole site is recoloured from this block.
  */
 :root {
-  color-scheme: dark;
-  --ground: #0e1113;
-  --ink: #e9ecea;
-  --muted: #9aa39f;
-  --rule: #2b3134;
-  --accent: #ff6a1f;
-  --on-accent: #0e1113;
-}
-
-:root[data-theme="light"] {
   color-scheme: light;
-  --ground: #f3f4f1;
-  --ink: #111416;
-  --muted: #565e5b;
-  --rule: #cdd2ce;
-  /* Darkened so orange text keeps 4.5:1 on paper. */
-  --accent: #b23a05;
+  --deep: #ececec;
+  --ground: #fafafa;
+  --surface: #ffffff;
+  --rule: #dedede;
+  --edge: #9e9e9e;
+  --ink: #000000;
+  --ink-2: #212121;
+  --muted: #484848;
+  --accent: #3264eb;
   --on-accent: #ffffff;
+  --selection: #d0d0d0;
 }
 
 @theme inline {
+  --color-deep: var(--deep);
   --color-ground: var(--ground);
-  --color-ink: var(--ink);
-  --color-muted: var(--muted);
+  --color-surface: var(--surface);
   --color-rule: var(--rule);
+  --color-edge: var(--edge);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-on-accent: var(--on-accent);
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-martian), ui-monospace, "SFMono-Regular", monospace;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
 }
 
 @layer base {
   html {
-    background: var(--ground);
+    background: var(--deep);
     color: var(--ink);
-    scroll-padding-top: 2rem;
+    /* Clears the sticky bar when jumping to a section. */
+    scroll-padding-top: 3.5rem;
     -webkit-text-size-adjust: 100%;
   }
 
   body {
     font-family: var(--font-sans);
-    font-feature-settings: "kern";
-    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
 
   ::selection {
-    background: var(--accent);
-    color: var(--on-accent);
+    background: var(--selection);
+    color: var(--ink);
   }
 
   :focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 3px;
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -70,30 +66,91 @@
 }
 
 @layer components {
-  /* Metadata voice: dates, stack lists, counts, footer. Nothing else is mono. */
-  .meta {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    line-height: 1.6;
-    font-stretch: 87.5%;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.01em;
+  /*
+   * A tiled window: square, 2px border, no title bar chrome beyond a label
+   * row. The border takes the accent while the pointer or keyboard focus is
+   * inside, the way a tiling window manager marks the active window.
+   */
+  .window {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    border: 2px solid var(--edge);
+    background: var(--ground);
+    transition: border-color 120ms ease-out;
   }
 
-  /* Row and table labels: the same face, condensed, so labels read as labels by width alone. */
+  .window:hover,
+  .window:focus-within {
+    border-color: var(--accent);
+  }
+
+  .window-bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--rule);
+    padding: 0.5rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+  }
+
+  .window-title {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .window-meta {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .window-body {
+    flex: 1;
+    padding: 1.25rem 1rem 1.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    .window-body {
+      padding: 1.5rem 1.5rem 1.75rem;
+    }
+  }
+
+  /* Metadata voice: dates, identifiers, status lines. */
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Keys of key/value rows. */
   .label {
-    font-stretch: 86%;
-    font-weight: 600;
-    font-size: 0.8125rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
     line-height: 1.5rem;
     color: var(--muted);
+  }
+
+  .chip {
+    display: inline-block;
+    border: 1px solid var(--rule);
+    padding: 0.0625rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1.25rem;
+    color: var(--ink-2);
+    white-space: nowrap;
   }
 
   .link {
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.22em;
-    text-decoration-color: var(--muted);
+    text-decoration-color: var(--edge);
     transition:
       color 120ms ease-out,
       text-decoration-color 120ms ease-out;
@@ -104,27 +161,41 @@
     text-decoration-color: var(--accent);
   }
 
-  /* Controls answer by inversion: ground and ink swap, nothing moves. */
   .control {
     display: inline-flex;
     align-items: center;
-    min-height: 2.25rem;
-    padding: 0 0.875rem;
-    border: 1px solid var(--ink);
-    font-size: 0.875rem;
-    font-weight: 500;
+    gap: 0.5rem;
+    min-height: 2rem;
+    border: 1px solid var(--edge);
+    padding: 0 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
     cursor: pointer;
     transition:
       background-color 120ms ease-out,
+      border-color 120ms ease-out,
       color 120ms ease-out;
   }
 
   .control:hover {
-    background: var(--ink);
-    color: var(--ground);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .control-primary {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 500;
+  }
+
+  .control-primary:hover {
+    background: transparent;
+    color: var(--accent);
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .window,
     .link,
     .control {
       transition: none;
@@ -134,10 +205,11 @@
 
 /*
  * Print: the same page as a one-page A4 CV.
- * Always the paper palette, whatever theme is active. Every size on the page
- * is in rem, so lowering the root size scales the whole sheet at once; the
- * rules below only tighten vertical rhythm. They sit outside any layer so
- * they win over utilities without !important.
+ * Black on white. Windows lose their frames
+ * and become plain sections under a rule. Every size on the page is in rem,
+ * so lowering the root size scales the whole sheet at once; the rules below
+ * only tighten vertical rhythm. They sit outside any layer so they win over
+ * utilities without !important.
  */
 @page {
   size: A4;
@@ -145,13 +217,16 @@
 }
 
 @media print {
-  :root,
-  :root[data-theme] {
+  :root {
     color-scheme: light;
+    --deep: #ffffff;
     --ground: #ffffff;
+    --surface: #ffffff;
+    --rule: #c4c4c4;
+    --edge: #8a8a8a;
     --ink: #000000;
+    --ink-2: #111111;
     --muted: #444444;
-    --rule: #b5b5b5;
     --accent: #000000;
     --on-accent: #ffffff;
   }
@@ -166,31 +241,36 @@
     padding: 0;
   }
 
-  main section {
-    margin-top: 0.7rem;
+  main {
+    gap: 0.55rem 1.5rem;
   }
 
-  main section > header {
-    padding-top: 0.25rem;
-    border-top-width: 1.5px;
+  .window {
+    border: 0;
+    background: none;
   }
 
-  main section > header + div {
-    margin-top: 0.4rem;
+  .window-bar {
+    border-top: 1.5px solid #000000;
+    border-bottom: 0;
+    padding: 0.15rem 0 0;
   }
 
-  main article {
-    padding-block: 0.4rem;
-    row-gap: 0.15rem;
+  .window-title {
+    font-weight: 700;
   }
 
-  main article ul {
-    margin-top: 0.3rem;
+  .window-body {
+    padding: 0.25rem 0 0;
   }
 
-  /* space-y sets both block margins; reset both. */
-  main article li {
-    margin-block: 0.05rem 0;
+  /* The name needs no label above it on paper. */
+  #about > .window-bar {
+    display: none;
+  }
+
+  #about .window-body > div {
+    gap: 0.5rem;
   }
 
   main h3 {
@@ -199,14 +279,35 @@
   }
 
   main h3 + p {
-    margin-top: 0;
+    margin-top: 0.1rem;
+  }
+
+  main article {
+    gap: 0.35rem;
+  }
+
+  main article ul {
+    margin-top: 0.3rem;
+    max-width: none;
+  }
+
+  /* space-y sets both block margins; reset both. */
+  main article li {
+    margin-block: 0.05rem 0;
   }
 
   main li,
   main dd,
   main td,
   main p {
+    font-size: 1rem;
     line-height: 1.3;
+    max-width: none;
+  }
+
+  main dl {
+    margin-top: 0;
+    row-gap: 0.25rem;
   }
 
   main dl > div,
@@ -214,51 +315,27 @@
     padding-block: 0.12rem;
   }
 
-  main dd > div {
-    padding-top: 0;
+  .label {
+    line-height: 1.3;
   }
 
-  main dl {
-    margin-top: 0.3rem;
+  .chip {
+    border: 0;
+    padding: 0 0.6rem 0 0;
+    line-height: 1.3;
   }
 
-  main p,
-  main ul {
-    max-width: none;
-  }
-
-  /* Compact projects sit in a wrapper with its own top margin. */
-  main article + div,
-  main section > div > div {
-    margin-top: 0;
-  }
-
-  /* Six skill rows become three rows of two; education details share one row. */
-  #skills tbody {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 1.5rem;
-  }
-
-  #skills tr:nth-child(2) {
-    border-top-width: 0;
-    padding-top: 0;
-  }
-
-  #education dl {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    column-gap: 2rem;
-  }
-
-  #education dl > div {
-    display: flex;
-    gap: 0.75rem;
+  /* The two stacked windows beside Skills. */
+  main > div {
+    gap: 0.55rem;
   }
 
   footer {
     margin-top: 0.7rem;
-    padding-block: 0.4rem 0;
+    border: 0;
+    border-top: 1px solid #c4c4c4;
+    padding: 0.35rem 0 0;
+    background: none;
   }
 
   main article,
@@ -281,7 +358,6 @@
     content: " " attr(href);
     font-family: var(--font-mono);
     font-size: 0.6875rem;
-    font-stretch: 87.5%;
   }
 
   .link svg {

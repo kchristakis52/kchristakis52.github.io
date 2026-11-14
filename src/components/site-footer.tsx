@@ -2,10 +2,10 @@ import { profile, site } from "@/content";
 import { buildInfo } from "@/lib/build-info";
 import { TextLink } from "./text-link";
 
-/** The revision line: which commit this page was built from, when, and by which CI run. */
+/** The status line: which commit this page was built from, when, and by which CI run. */
 export function SiteFooter() {
   return (
-    <footer className="meta border-rule text-muted mt-24 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t py-6 md:mt-32">
+    <footer className="meta border-edge bg-ground text-muted mt-2.5 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-2 px-4 py-2.5">
       <p>{profile.name}</p>
       <ul className="flex flex-wrap gap-x-6 gap-y-1">
         <li>

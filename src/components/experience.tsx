@@ -1,21 +1,21 @@
 import { experience } from "@/content";
-import { formatMonth, plural } from "@/lib/format";
-import { Section } from "./section";
+import { formatMonth } from "@/lib/format";
+import { Window } from "./window";
+
+// The current role gets the wide tile; earlier roles sit beside it.
+const SPANS = ["md:col-span-12 lg:col-span-8", "md:col-span-12 lg:col-span-4"];
 
 export function Experience() {
   return (
-    <Section
-      id="experience"
-      title="Experience"
-      meta={plural(experience.length, "role")}
-    >
-      {experience.map((role) => (
-        <article
+    <>
+      {experience.map((role, index) => (
+        <Window
           key={role.id}
-          className="border-rule grid grid-cols-1 gap-x-6 gap-y-3 border-t py-10 first:border-t-0 first:pt-0 md:grid-cols-12 print:grid-cols-12"
-        >
-          <div className="meta text-muted md:col-span-3 md:pt-2 print:col-span-3">
-            <p>
+          // The first window carries the section anchor the bar links to.
+          id={index === 0 ? "experience" : `experience-${role.id}`}
+          title="experience"
+          meta={
+            <>
               <time dateTime={role.start}>{formatMonth(role.start)}</time>
               {" to "}
               {role.end ? (
@@ -23,35 +23,38 @@ export function Experience() {
               ) : (
                 "present"
               )}
-            </p>
-            <p>{role.location}</p>
-            {role.end === null ? (
-              <p className="text-accent mt-2 flex items-center gap-2">
-                <span aria-hidden="true" className="bg-accent size-1.5" />
-                Current
-              </p>
-            ) : null}
-          </div>
-
-          <div className="md:col-span-9 print:col-span-9">
-            <h3 className="text-2xl leading-tight font-semibold tracking-[-0.02em] md:text-[1.75rem]">
+            </>
+          }
+          className={`${SPANS[index] ?? "md:col-span-12 lg:col-span-6"} print:col-span-12`}
+        >
+          <article>
+            <h3 className="font-mono text-2xl leading-tight font-bold tracking-[-0.03em] text-balance">
               {role.organisation}
             </h3>
-            <p className="text-muted mt-1.5">{role.title}</p>
-            <ul className="mt-6 max-w-[68ch] space-y-3 leading-[1.6]">
+            <p className="text-ink-2 mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+              {role.title}
+              <span className="meta text-muted">{role.location}</span>
+              {role.end === null ? (
+                <span className="meta text-accent flex items-center gap-1.5">
+                  <span aria-hidden="true" className="bg-accent size-1.5" />
+                  current
+                </span>
+              ) : null}
+            </p>
+            <ul className="mt-5 max-w-[70ch] space-y-2.5 text-[0.9375rem] leading-[1.6]">
               {role.highlights.map((item) => (
-                <li key={item} className="relative pl-6 text-pretty">
+                <li key={item} className="relative pl-5 text-pretty">
                   <span
                     aria-hidden="true"
-                    className="bg-muted absolute top-[0.8em] left-0 h-px w-3"
+                    className="bg-edge absolute top-[0.62em] left-0 size-1.5"
                   />
                   {item}
                 </li>
               ))}
             </ul>
-          </div>
-        </article>
+          </article>
+        </Window>
       ))}
-    </Section>
+    </>
   );
 }

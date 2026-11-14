@@ -3,9 +3,10 @@
 import { useRef, useState, type KeyboardEvent } from "react";
 import type { Diagram, DiagramNode } from "@/content";
 import { layoutDiagram, NODE } from "@/lib/diagram-layout";
+import { Chips } from "./window";
 
 // Room around the graph for the focus ring and the edge labels.
-const PAD = 6;
+const PAD = 7;
 
 /**
  * The short tech line inside a node box. Skips an item that only repeats the
@@ -17,17 +18,6 @@ function inNodeTech(node: DiagramNode): string {
   );
   const pair = items.slice(0, 2).join(", ");
   return pair.length <= 18 ? pair : (items[0] ?? "");
-}
-
-function Tech({ items }: { items: string[] }) {
-  if (!items.length) return null;
-  return (
-    <ul className="meta text-muted flex flex-wrap gap-x-4 gap-y-0.5">
-      {items.map((item) => (
-        <li key={item}>{item}</li>
-      ))}
-    </ul>
-  );
 }
 
 /**
@@ -128,30 +118,30 @@ export function ArchitectureDiagram({ diagram }: { diagram: Diagram }) {
             >
               {/* Focus ring: its own rect, because outlines on SVG groups render inconsistently. */}
               <rect
-                x={at.x - 4}
-                y={at.y - 4}
-                width={NODE.width + 8}
-                height={NODE.height + 8}
+                x={at.x - 5}
+                y={at.y - 5}
+                width={NODE.width + 10}
+                height={NODE.height + 10}
                 fill="none"
                 strokeWidth="2"
                 className="stroke-accent opacity-0 group-focus-visible:opacity-100"
               />
               <rect
-                x={at.x + 0.5}
-                y={at.y + 0.5}
-                width={NODE.width - 1}
-                height={NODE.height - 1}
-                strokeWidth="1"
+                x={at.x + 1}
+                y={at.y + 1}
+                width={NODE.width - 2}
+                height={NODE.height - 2}
+                strokeWidth="2"
                 strokeDasharray={node.role === "context" ? "4 3" : undefined}
-                className={`stroke-ink transition-colors duration-100 motion-reduce:transition-none ${
-                  isActive ? "fill-ink" : "fill-ground"
+                className={`${isActive ? "stroke-accent" : "stroke-edge"} transition-colors duration-100 motion-reduce:transition-none ${
+                  isActive ? "fill-accent" : "fill-ground"
                 }`}
               />
               <text
                 x={at.x + NODE.width / 2}
                 y={at.y + (inNodeTech(node) ? 28 : 37)}
                 textAnchor="middle"
-                className={`text-[14px] font-semibold ${isActive ? "fill-ground" : "fill-ink"}`}
+                className={`font-mono text-[13px] font-bold ${isActive ? "fill-on-accent" : "fill-ink"}`}
               >
                 {node.label}
               </text>
@@ -160,7 +150,7 @@ export function ArchitectureDiagram({ diagram }: { diagram: Diagram }) {
                   x={at.x + NODE.width / 2}
                   y={at.y + 46}
                   textAnchor="middle"
-                  className={`font-mono text-[9px] ${isActive ? "fill-ground" : "fill-muted"}`}
+                  className={`font-mono text-[9px] ${isActive ? "fill-on-accent" : "fill-muted"}`}
                 >
                   {inNodeTech(node)}
                 </text>
@@ -174,14 +164,16 @@ export function ArchitectureDiagram({ diagram }: { diagram: Diagram }) {
       {active ? (
         <div className="border-rule mt-6 hidden min-h-[5.5rem] grid-cols-12 gap-x-6 border-t pt-3 lg:grid">
           <div className="col-span-3">
-            <p className="font-semibold">{active.label}</p>
+            <p className="font-mono font-bold tracking-[-0.02em]">
+              {active.label}
+            </p>
             <p className="meta text-muted">{diagram.roleLabels[active.role]}</p>
           </div>
           <div className="col-span-9 space-y-2">
             <p className="max-w-[62ch] leading-[1.6] text-pretty">
               {active.detail}
             </p>
-            <Tech items={active.tech} />
+            <Chips items={active.tech} />
           </div>
         </div>
       ) : null}
@@ -194,14 +186,14 @@ export function ArchitectureDiagram({ diagram }: { diagram: Diagram }) {
           >
             <span className="meta text-muted pt-1">{index + 1}</span>
             <div className="space-y-1.5">
-              <p className="font-semibold">
+              <p className="font-mono font-bold tracking-[-0.02em]">
                 {node.label}{" "}
                 <span className="meta text-muted ml-2 font-normal">
                   {diagram.roleLabels[node.role]}
                 </span>
               </p>
               <p className="leading-[1.6] text-pretty">{node.detail}</p>
-              <Tech items={node.tech} />
+              <Chips items={node.tech} />
             </div>
           </li>
         ))}

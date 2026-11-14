@@ -1,11 +1,16 @@
 import { skills } from "@/content";
 import { plural } from "@/lib/format";
-import { Section } from "./section";
+import { Window } from "./window";
 
 export function Skills() {
   return (
-    <Section id="skills" title="Skills" meta={plural(skills.length, "group")}>
-      <table className="border-rule w-full border-collapse border-b text-left">
+    <Window
+      id="skills"
+      title="skills"
+      meta={plural(skills.length, "group")}
+      className="md:col-span-12 lg:col-span-7 print:col-span-7"
+    >
+      <table className="w-full border-collapse text-left">
         <caption className="sr-only">Skills by area</caption>
         <thead className="sr-only">
           <tr>
@@ -17,18 +22,16 @@ export function Skills() {
           {skills.map((group) => (
             <tr
               key={group.label}
-              className="border-rule grid grid-cols-1 gap-x-6 border-t py-3 first:border-t-0 first:pt-0 md:grid-cols-12 print:grid-cols-12"
+              className="border-rule grid grid-cols-1 gap-x-4 border-t py-2.5 first:border-t-0 first:pt-0 last:pb-0 sm:grid-cols-[8.5rem_1fr]"
             >
-              <th scope="row" className="label md:col-span-3 print:col-span-3">
-                {group.label}
+              <th scope="row" className="label font-normal">
+                {group.label.toLowerCase()}
               </th>
-              <td className="leading-6 md:col-span-9 print:col-span-9">
-                {group.items.join(", ")}
-              </td>
+              <td className="leading-6">{group.items.join(", ")}</td>
             </tr>
           ))}
         </tbody>
       </table>
-    </Section>
+    </Window>
   );
 }
